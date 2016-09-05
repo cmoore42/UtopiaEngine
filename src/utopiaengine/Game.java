@@ -87,16 +87,13 @@ public class Game implements ActionListener {
         
         switch(a.getType()) {
             case TRAVEL:
-                Location destination;
                 
                 if (a.getLocation() == player.getLocation()) {
-                    destination = WORKSHOP;
-                } else {
-                    destination = a.getLocation();
+                    a.setLocation(WORKSHOP);
                 }
                 
-                destination.travelTo();
-                info("Traveling to " + destination.getName());
+                a.getLocation().travelTo();
+                info("Traveling to " + a.getLocation().getName());
                 break;
             case SEARCH:
                 doSearch();

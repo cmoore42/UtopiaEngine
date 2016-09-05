@@ -76,7 +76,6 @@ public class ActionDispatcher extends Thread {
     
     public void addListener(ActionListener l) {
         synchronized(listeners) {
-            System.out.println("Adding " + l.getClass().getName() + " as a listener.");
             listeners.add(l);
         }
     }
