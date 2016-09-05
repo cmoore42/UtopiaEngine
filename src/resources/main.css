@@ -1,0 +1,120 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Sep 1, 2016, 4:26:43 PM
+    Author     : moorechr
+*/
+
+/*
+ * Colors:
+ * Overall Background           color-bg    #c7c7c7 (not used))
+ * Box backgrounds              color-bbg   #faebd9   
+ * Missing item background      color-mbg   #948c54
+ * Missing item text            color-mt    #e0d580
+ * Found item background        color-fbg   #97a5ad
+ * Found item text              color-ft    #ffffff
+ * Activated item background    color-abg   #d9eefa
+ * Activated item text          color-at    black
+ * Box title background         color-btbg  #c28350
+ * Box title text               color-btt   #151e1c
+
+*/
+
+
+.root {
+    /*
+    -fx-border-color: black;
+    -fx-border-radius: 8px;
+    -fx-text-fill: black;
+    -fx-font-size: 12px;
+    -fx-padding: 6px;
+    -fx-font-weight: bold;  
+    -fx-background-color: /* color-bg #c7c7c7;
+        */
+}
+
+.boxed {
+    -fx-border-color: black;
+    -fx-border-radius: 8px;
+    -fx-padding: 1px;
+}
+
+.box-title {
+    -fx-background-color: /* color-btbg */ #c28350;
+    -fx-text-fill: /* color-btt */ #151e1c;
+    -fx-text-alignment: center;
+    -fx-padding: 1px;
+}
+
+.top-section {
+    -fx-background-color: /* color-bbg */ #faebd9;
+}
+
+.upper-section {
+    -fx-background-color: /* color-bbg */ #faebd9;
+}
+
+.lower-section {
+    -fx-background-color: /* color-bbg */ #faebd9;
+}
+
+.bottom-section {
+    -fx-background-color: /* color-bbg */ #faebd9;
+}
+
+.missing {
+    -fx-background-color: /* color-mbg */ #948c54;
+    -fx-text-fill: /* color-mt */ #e0d580;
+}
+
+.found {
+    -fx-background-color: /* color-fbg */ #97a5ad;
+    -fx-text-fill: /* color-ft */ #ffffff;
+}
+
+.activated {
+    -fx-background-color: /* color-abg */ #d9eefa;
+    -fx-text-fill: /* color-at */ black;
+}
+
+
+.location-active {
+    -fx-border-color: black;
+    -fx-border-radius: 8px;
+    -fx-border-width: 5px;
+}
+
+.location-non-active {
+    -fx-border-color: black;
+    -fx-border-radius: 8px;
+    -fx-border-width: 2px;
+}
+
+#topLevelLayoutUi {
+    -fx-grid-lines-visible: true;
+}
+
+#allRegionsUi {
+    -fx-hgap: 3.0;
+    -fx-vgap: 3.0;
+    /* -fx-grid-lines-visible: true; */
+}
+
+#allConstructsUi {
+    -fx-hgap: 3.0;
+    -fx-vgap: 3.0;
+    
+}
+
+#storesUi {
+    -fx-border-color: black;
+    -fx-border-radius: 8px;   
+    -fx-text-fill: black;
+    -fx-font-size: 16px;
+    -fx-padding: 6px;
+    -fx-font-weight: bold;
+}
+
