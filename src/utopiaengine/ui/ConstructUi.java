@@ -30,9 +30,6 @@ public class ConstructUi extends HBox implements ActionListener {
     private Button activateButton;
     private Construct construct;
     
-    private static PseudoClass FOUND = PseudoClass.getPseudoClass("found");
-    private static PseudoClass ACTIVATED = PseudoClass.getPseudoClass("activated");
-    
     public ConstructUi(Construct construct) {
         this.construct = construct;
         constructState = new Label();
@@ -88,7 +85,7 @@ public class ConstructUi extends HBox implements ActionListener {
             activateButton.setDisable(true);
         }
         if (construct.isActivated()) {
-            if ((construct == BATTERY) || (construct == SEAL)) {
+            if (construct == BATTERY) {
                 activateButton.setDisable(false);
                 activateButton.setText("Use");
             } else {
