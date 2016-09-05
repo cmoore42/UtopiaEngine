@@ -18,9 +18,6 @@ import utopiaengine.Game;
 import static utopiaengine.Treasure.RECORD;
 import utopiaengine.actions.Action;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.CanConnectAction;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.StoresChangedAction;
 
 /**
  *
@@ -88,19 +85,21 @@ public class ConnectionUi extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof CanConnectAction) {
-            CanConnectAction c = (CanConnectAction)a;
-            if (c.getConnection() == connection) {
-                connectButton.setDisable(!c.canConnect());
-            }
-        } else if (a instanceof EndOfWorldAction) {
-            connectButton.setDisable(true);
-        } else if (a instanceof StoresChangedAction) {
-            Component c = connection.getComponent();
-            double d_qty = (double)c.getQuantity();
-            double percent = d_qty / 4.0;
-            progressBar.setProgress(percent);
+        switch(a.getType()) {
+            case CAN_CONNECT:
+                if (a.getConnection() == connection) {
+                    connectButton.setDisable(!a.isBool());
+                }
+                break;
+            case END_OF_WORLD:
+                connectButton.setDisable(true);
+                break;
+            case STORES_CHANGED:
+                Component c = connection.getComponent();
+                double d_qty = (double)c.getQuantity();
+                double percent = d_qty / 4.0;
+                progressBar.setProgress(percent);
+                break;
         }
-    }
-    
+    }   
 }

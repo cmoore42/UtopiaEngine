@@ -10,19 +10,9 @@ import static utopiaengine.Event.MONSTERS;
 import static utopiaengine.Location.WORKSHOP;
 import static utopiaengine.Treasure.MOONLACE;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.INFO;
+import static utopiaengine.actions.Action.EventType.SHUTDOWN;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.ActivateAction;
-import utopiaengine.actions.DelayDoomsdayAction;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.EngineActivatedAction;
-import utopiaengine.actions.InfoAction;
-import utopiaengine.actions.PerfectZeroSearchAction;
-import utopiaengine.actions.PlayerHealthChanged;
-import utopiaengine.actions.RestAction;
-import utopiaengine.actions.SearchAction;
-import utopiaengine.actions.ShutdownAction;
-import utopiaengine.actions.ThrowAwayAction;
-import utopiaengine.actions.TravelAction;
 import utopiaengine.ui.ActivateDialog;
 import utopiaengine.ui.CombatDialog;
 import utopiaengine.ui.EndGameDialog;
@@ -52,7 +42,7 @@ public class Game implements ActionListener {
     }
     
     public void shutdown() {
-        postAction(new ShutdownAction());
+        postAction(new Action(SHUTDOWN));
     }
     
     public static Player getPlayer() {
@@ -95,66 +85,57 @@ public class Game implements ActionListener {
     @Override
     public  void handleAction(Action a) {
         
-        if (a instanceof TravelAction) {
-            TravelAction t = (TravelAction) a;
-            
-            if (t.getDestination() == player.getLocation()) {
-                t.setDestination(WORKSHOP);
-            }
-            
-            t.getDestination().travelTo();
-            info("Traveling to " + t.getDestination().getName());
-        }
-        
-        if (a instanceof SearchAction) {
-            doSearch();
-        }
-        
-        if (a instanceof ActivateAction) {
-            ActivateAction b = (ActivateAction) a;
-            ActivateDialog d = new ActivateDialog(b.getConstruct());
-            d.showAndWait();
-        }
-        
-        if (a instanceof RestAction) {
-            info("Resting for a day.");
-            player.heal();
-            timeTrack.tick();
-        }
-        
-        if (a instanceof DelayDoomsdayAction) {
-            timeTrack.extendDay();
-        }
-        
-        if (a instanceof ThrowAwayAction) {
-            ThrowAwayAction t = (ThrowAwayAction) a;
-            
-            wasteBasket.throwAway(t.getWhich());
-        }
-        
-        if (a instanceof EndOfWorldAction) {
-            info("The world has ended");
-            /* Final scoring stuff here */
-            reportFinalScore();
-        }
-        
-        if (a instanceof EngineActivatedAction) {
-            info("You've saved the world!");
-            engineActivated = true;
-            gameOver = true;
-            reportFinalScore();
-        }
-        
-        if (a instanceof PerfectZeroSearchAction) {
-            ++perfectSearches;
-        }
-        
-        if (a instanceof PlayerHealthChanged) {
-            if (player.isDead()) {
-                info("You've died.");
+        switch(a.getType()) {
+            case TRAVEL:
+                Location destination;
+                
+                if (a.getLocation() == player.getLocation()) {
+                    destination = WORKSHOP;
+                } else {
+                    destination = a.getLocation();
+                }
+                
+                destination.travelTo();
+                info("Traveling to " + destination.getName());
+                break;
+            case SEARCH:
+                doSearch();
+                break;
+            case ACTIVATE:
+                ActivateDialog d = new ActivateDialog(a.getConstruct());
+                d.showAndWait();
+                break;
+            case REST:
+                info("Resting for a day.");
+                player.heal();
+                timeTrack.tick();
+                break;
+            case DELAY_DOOMSDAY:
+                timeTrack.extendDay();
+                break;
+            case THROW_AWAY:
+                wasteBasket.throwAway(a.getValue());
+                break;
+            case END_OF_WORLD:
+                info("The world has ended");
+                reportFinalScore();
+                break;
+            case ENGINE_ACTIVATED:
+                info("You've saved the world!");
+                engineActivated = true;
                 gameOver = true;
                 reportFinalScore();
-            }
+                break;
+            case PERFECT_ZERO_SEARCH:
+                ++perfectSearches;
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (player.isDead()) {
+                    info("You've died.");
+                    gameOver = true;
+                    reportFinalScore();
+                }
+                break;               
         }
     }
     
@@ -266,7 +247,7 @@ public class Game implements ActionListener {
     }
     
     public static void info(String line) {
-        postAction(new InfoAction(line));
+        postAction(new Action(INFO, line));
     }
     
     private void reportFinalScore() {

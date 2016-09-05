@@ -29,8 +29,9 @@ import static utopiaengine.Treasure.PLATE;
 import static utopiaengine.Treasure.RECORD;
 import static utopiaengine.Treasure.SCALE;
 import static utopiaengine.Treasure.SHARD;
-import utopiaengine.actions.EventChangedAction;
-import utopiaengine.actions.LocationChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.EVENT_CHANGED;
+import static utopiaengine.actions.Action.EventType.LOCATION_CHANGED;
 
 /**
  *
@@ -154,7 +155,7 @@ public enum Location {
         
         player.setLocation(this);
         searchCounter = 0;
-        Game.postAction(new LocationChangedAction(this));
+        Game.postAction(new Action(LOCATION_CHANGED, this));
     }
 
     public int getIndex() {
@@ -210,7 +211,7 @@ public enum Location {
         }
         
         ++searchCounter;
-        Game.postAction(new LocationChangedAction(this));
+        Game.postAction(new Action(LOCATION_CHANGED, this));
 
 
     }
@@ -278,12 +279,12 @@ public enum Location {
     
     public void clearEvents() {
         events.clear();
-        Game.postAction(new EventChangedAction());
+        Game.postAction(new Action(EVENT_CHANGED));
     }
     
     public void addEvent(Event e) {
         events.add(e);
-        Game.postAction(new EventChangedAction());
+        Game.postAction(new Action(EVENT_CHANGED));
     }
     
     public List<Event> getEvents() {

@@ -6,16 +6,12 @@
 package utopiaengine.ui;
 
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import static utopiaengine.Construct.BATTERY;
-import static utopiaengine.Construct.SEAL;
 import utopiaengine.Game;
-import static utopiaengine.Location.WORKSHOP;
 import utopiaengine.Treasure;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.TREASURE_FOUND;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.TreasureFoundAction;
 
 /**
  *
@@ -58,7 +54,7 @@ public class TreasureUi extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof TreasureFoundAction) {
+        if (a.getType() == TREASURE_FOUND) {
             update();
         }
     }

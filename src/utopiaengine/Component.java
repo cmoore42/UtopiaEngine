@@ -5,7 +5,8 @@
  */
 package utopiaengine;
 
-import utopiaengine.actions.StoresChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.STORES_CHANGED;
 
 /**
  *
@@ -38,14 +39,14 @@ public enum Component {
     public void increment() {
         if (quantity < 4) {
             ++quantity;
-            Game.postAction(new StoresChangedAction());
+            Game.postAction(new Action(STORES_CHANGED));
         }
     }
     
     public void decrement() {
         if (quantity > 0) {
             --quantity;
-            Game.postAction(new StoresChangedAction());
+            Game.postAction(new Action(STORES_CHANGED));
         }
     }
     

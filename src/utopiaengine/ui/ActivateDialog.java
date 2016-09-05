@@ -23,8 +23,8 @@ import utopiaengine.Game;
 import utopiaengine.Location;
 import static utopiaengine.Tool.CHARM;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.END_OF_WORLD;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
 
 /**
  *
@@ -51,7 +51,7 @@ public class ActivateDialog extends Dialog<Integer> implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof EndOfWorldAction) {
+        if (a.getType() == END_OF_WORLD) {
             firstAttempt.disable();
             secondAttempt.disable();
             charmButton.setDisable(true);

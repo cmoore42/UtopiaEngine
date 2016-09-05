@@ -22,16 +22,9 @@ import utopiaengine.Game;
 import utopiaengine.Location;
 import utopiaengine.Player;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.SEARCH;
+import static utopiaengine.actions.Action.EventType.TRAVEL;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.ConstructChangedAction;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.EventChangedAction;
-import utopiaengine.actions.LocationChangedAction;
-import utopiaengine.actions.PlayerHealthChanged;
-import utopiaengine.actions.SearchAction;
-import utopiaengine.actions.StoresChangedAction;
-import utopiaengine.actions.TravelAction;
-import utopiaengine.actions.TreasureFoundAction;
 
 /**
  *
@@ -46,7 +39,6 @@ public class RegionUi  extends VBox implements ActionListener {
     private final Label component;
     private final ProgressBar componentQty;
     private final Label treasure;
-    private final Label eventLabel;
     private final ImageView[] searches;
     private final Image freeSearch;
     private final Image costlySearch;
@@ -77,8 +69,7 @@ public class RegionUi  extends VBox implements ActionListener {
         descriptionBox.getStyleClass().add("boxed");
         
         eventBox = new VBox();
-        eventLabel = new Label("");
-        eventBox.getChildren().add(eventLabel);
+
         
         HBox topBox = new HBox();
         topBox.getChildren().addAll(descriptionBox, eventBox);
@@ -104,7 +95,7 @@ public class RegionUi  extends VBox implements ActionListener {
 
             @Override
             public void handle(ActionEvent event) {
-                Game.postAction(new SearchAction(location));
+                Game.postAction(new Action(SEARCH, location));
                 
                 refreshSearchCounter();
             }
@@ -116,7 +107,7 @@ public class RegionUi  extends VBox implements ActionListener {
 
             @Override
             public void handle(ActionEvent event) {                
-                Game.postAction(new TravelAction(location));
+                Game.postAction(new Action(TRAVEL, location));
             }
             
         });
@@ -145,75 +136,84 @@ public class RegionUi  extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof TravelAction) {
-            TravelAction t = (TravelAction) a;
-            if (t.getDestination() == location) {
-                searchButton.setDisable(false);
-                if (SEAL.isActivated() && (!SEAL.isUsed())) {
-                    sealButton.setDisable(false);
-                }
-                travelButton.setText("Leave");
-                getStyleClass().clear();
-                getStyleClass().add("location-active");
-                refreshSearchCounter();
-            } else {
-                searchButton.setDisable(true);
-                sealButton.setDisable(true);
-                travelButton.setText("Travel Here");
-                getStyleClass().clear();
-                getStyleClass().add("location-non-active");
-            }
-        } else if (a instanceof PlayerHealthChanged) {
-            Player p = Game.getPlayer();
-            if (p.isUnconsious()|| p.isDead()) {
-                /* Can't search or travel if we're dead or unconscious */
-                searchButton.setDisable(true);
-                travelButton.setDisable(true);
-            } else {
-                if (p.getLocation() == location) {
+        switch(a.getType()) {
+            case TRAVEL:
+                if (a.getLocation() == location) {
                     searchButton.setDisable(false);
+                    if (SEAL.isActivated() && (!SEAL.isUsed())) {
+                        sealButton.setDisable(false);
+                    }
+                    travelButton.setText("Leave");
+                    getStyleClass().clear();
+                    getStyleClass().add("location-active");
+                    refreshSearchCounter();
                 } else {
                     searchButton.setDisable(true);
+                    sealButton.setDisable(true);
+                    travelButton.setText("Travel Here");
+                    getStyleClass().clear();
+                    getStyleClass().add("location-non-active");
                 }
-                travelButton.setDisable(false);
-            }
-        } else if (a instanceof EventChangedAction) {
-            eventBox.getChildren().clear();
-            List<Event> eventList = location.getEvents();
-            for (Event e : eventList) {
-                Label eventLabel;
-                eventLabel = new Label(e.getName());
-                eventLabel.getStyleClass().add("boxed");
-                eventLabel.getStyleClass().add("activated");
-                eventLabel.setTooltip(e.getTooltip());
-                eventBox.getChildren().add(eventLabel);
-            }
-        } else if (a instanceof LocationChangedAction) {
-            refreshSearchCounter();
-        } else if (a instanceof EndOfWorldAction) {
-            searchButton.setDisable(true);
-            travelButton.setDisable(true);
-        } else if (a instanceof ConstructChangedAction) {
-            if (SEAL.isActivated() && (!SEAL.isUsed()) && (Game.getPlayer().getLocation() == location)) {
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                Player p = Game.getPlayer();
+                if (p.isUnconsious()|| p.isDead()) {
+                    /* Can't search or travel if we're dead or unconscious */
+                    searchButton.setDisable(true);
+                    travelButton.setDisable(true);
+                } else {
+                    if (p.getLocation() == location) {
+                        searchButton.setDisable(false);
+                    } else {
+                        searchButton.setDisable(true);
+                    }
+                    travelButton.setDisable(false);
+                }
+                break;
+            case EVENT_CHANGED:
+                eventBox.getChildren().clear();
+                List<Event> eventList = location.getEvents();
+                for (Event e : eventList) {
+                    Label eventLabel;
+                    eventLabel = new Label(e.getName());
+                    eventLabel.getStyleClass().add("boxed");
+                    eventLabel.getStyleClass().add("activated");
+                    eventLabel.setTooltip(e.getTooltip());
+                    eventBox.getChildren().add(eventLabel);
+                }
+                break;
+            case LOCATION_CHANGED:
+                refreshSearchCounter();
+                break;
+            case END_OF_WORLD:
+                searchButton.setDisable(true);
+                travelButton.setDisable(true);
+                break;
+            case CONSTRUCT_CHANGED:
+                if (SEAL.isActivated() && (!SEAL.isUsed()) && (Game.getPlayer().getLocation() == location)) {
                 sealButton.setDisable(false);
-            } else {
-                sealButton.setDisable(true);
-            }
-            if (location.getConstruct().isActivated()) {
-                construct.getStyleClass().add("activated");
-            } else if (location.getConstruct().isFound()) {
-                construct.getStyleClass().add("found");
-            }
-        } else if (a instanceof StoresChangedAction) {
-            Component c = location.getComponent();
-            double d_qty = (double) c.getQuantity();
-            double percent = d_qty / 4.0;
-            componentQty.setProgress(percent);
-        } else if (a instanceof TreasureFoundAction) {
-            if (location.getTreasure().isFound()) {
-                treasure.getStyleClass().add("activated");
-            }
-        } 
+                } else {
+                    sealButton.setDisable(true);
+                }
+                
+                if (location.getConstruct().isActivated()) {
+                    construct.getStyleClass().add("activated");
+                } else if (location.getConstruct().isFound()) {
+                    construct.getStyleClass().add("found");
+                }
+                break;
+            case STORES_CHANGED:
+                Component c = location.getComponent();
+                double d_qty = (double) c.getQuantity();
+                double percent = d_qty / 4.0;
+                componentQty.setProgress(percent);
+                break;
+            case TREASURE_FOUND:
+                if (location.getTreasure().isFound()) {
+                    treasure.getStyleClass().add("activated");
+                }
+                break;
+        }
     }
     
     private void refreshSearchCounter() {

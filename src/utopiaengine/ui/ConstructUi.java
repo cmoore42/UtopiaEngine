@@ -18,11 +18,8 @@ import static utopiaengine.Construct.SEAL;
 import utopiaengine.Game;
 import static utopiaengine.Location.WORKSHOP;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.ACTIVATE;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.ActivateAction;
-import utopiaengine.actions.ConstructChangedAction;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.TravelAction;
 
 /**
  *
@@ -44,7 +41,7 @@ public class ConstructUi extends HBox implements ActionListener {
         activateButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Game.postAction(new ActivateAction(construct));
+                Game.postAction(new Action(ACTIVATE, construct));
             }
                 
         });
@@ -103,12 +100,14 @@ public class ConstructUi extends HBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof ConstructChangedAction) {
-            update();
-        } else if (a instanceof TravelAction) {
-            update();
-        } else if (a instanceof EndOfWorldAction) {
-            activateButton.setDisable(true);
+        switch (a.getType()) {
+            case CONSTRUCT_CHANGED:
+            case TRAVEL:
+                update();
+                break;
+            case END_OF_WORLD:
+                activateButton.setDisable(true);
+                break;
         }
     }
     

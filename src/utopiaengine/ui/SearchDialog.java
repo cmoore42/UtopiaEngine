@@ -12,7 +12,6 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
@@ -27,10 +26,8 @@ import static utopiaengine.Location.MAW;
 import static utopiaengine.Location.PEAK;
 import static utopiaengine.Tool.ROD;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.PERFECT_ZERO_SEARCH;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.PerfectZeroSearchAction;
-import utopiaengine.actions.PlayerHealthChanged;
 
 /**
  *
@@ -228,7 +225,7 @@ public class SearchDialog extends Dialog<Integer> implements ActionListener {
             result = first - second;
 
             if (result == 0) {
-                Game.postAction(new PerfectZeroSearchAction());
+                Game.postAction(new Action(PERFECT_ZERO_SEARCH));
             }
         } catch (NumberFormatException e) {
             
@@ -237,18 +234,19 @@ public class SearchDialog extends Dialog<Integer> implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof EndOfWorldAction) {
-            getDialogPane().lookupButton(doneButton).setDisable(false);
-            for (int i=0; i<6; i++ ){
-                gridSquares[i].setDisable(true);
-            }
-            dowsingRodButton.setDisable(true);
-        }
-        if (a instanceof PlayerHealthChanged) {
-            if (Game.getPlayer().isDead() || Game.getPlayer().isUnconsious()) {
+        switch(a.getType()) {
+            case END_OF_WORLD:
+                getDialogPane().lookupButton(doneButton).setDisable(false);
+                for (int i=0; i<6; i++ ){
+                    gridSquares[i].setDisable(true);
+                }
                 dowsingRodButton.setDisable(true);
-            }
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (Game.getPlayer().isDead() || Game.getPlayer().isUnconsious()) {
+                    dowsingRodButton.setDisable(true);
+                }
+                break;
         }
-    }
-    
+    }    
 }

@@ -6,7 +6,8 @@
 package utopiaengine;
 
 import java.util.Random;
-import utopiaengine.actions.DiceRolledAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.DICE_ROLLED;
 
 /**
  *
@@ -26,7 +27,7 @@ public class Dice {
     public void roll() {
         die1 = random.nextInt(6) + 1;
         die2 = random.nextInt(6) + 1;
-        Game.postAction(new DiceRolledAction());
+        Game.postAction(new Action(DICE_ROLLED));
     }
     
     public int getDie(int which) {

@@ -18,11 +18,11 @@ import static utopiaengine.Construct.LENS;
 import static utopiaengine.Construct.MIRROR;
 import static utopiaengine.Construct.SEAL;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.CAN_CONNECT;
+import static utopiaengine.actions.Action.EventType.CONNECTION_COMPLETE;
+import static utopiaengine.actions.Action.EventType.CONSTRUCT_CHANGED;
+import static utopiaengine.actions.Action.EventType.STORES_CHANGED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.CanConnectAction;
-import utopiaengine.actions.ConnectionCompleteAction;
-import utopiaengine.actions.ConstructChangedAction;
-import utopiaengine.actions.StoresChangedAction;
 
 /**
  *
@@ -58,7 +58,7 @@ public enum Connection implements ActionListener {
     public void connect(int cost) {
         this.connected = true;
         this.connectionCost = cost;
-        Game.postAction(new ConnectionCompleteAction(this));
+        Game.postAction(new Action(CONNECTION_COMPLETE, this));
     }
     
     public boolean isConnected() {
@@ -73,14 +73,14 @@ public enum Connection implements ActionListener {
     public void handleAction(Action a) {
         
         /* I'm interested in constructs being activated and components being found */
-        if ((a instanceof StoresChangedAction) || (a instanceof ConstructChangedAction)) {
+        if ((a.getType() == STORES_CHANGED) || (a.getType() == CONSTRUCT_CHANGED)) {
             if ((component.getQuantity() > 0) &&
                 (leftConstruct.isActivated()) &&
                 (rightConstruct.isActivated()) &&
                 (!connected)) {
-                Game.postAction(new CanConnectAction(this, true));
+                Game.postAction(new Action(CAN_CONNECT, this, true));
             } else {
-                Game.postAction(new CanConnectAction(this, false));
+                Game.postAction(new Action(CAN_CONNECT, this, true));
             }
         }
 

@@ -7,15 +7,14 @@ package utopiaengine.ui;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import static utopiaengine.Construct.BATTERY;
 import utopiaengine.Game;
 import utopiaengine.Tool;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.CONSTRUCT_CHANGED;
+import static utopiaengine.actions.Action.EventType.TOOL_CHANGED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.ConstructChangedAction;
-import utopiaengine.actions.ToolChangedAction;
 
 /**
  *
@@ -50,8 +49,7 @@ public class ToolsUi extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if ((a instanceof ToolChangedAction) || 
-            (a instanceof ConstructChangedAction)) {
+        if ((a.getType() == TOOL_CHANGED) || (a.getType() == CONSTRUCT_CHANGED)) { 
             update();
         }
     }

@@ -14,10 +14,8 @@ import javafx.scene.layout.HBox;
 import static utopiaengine.Construct.GATE;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.REST;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.PlayerHealthChanged;
-import utopiaengine.actions.RestAction;
 
 /**
  *
@@ -45,7 +43,7 @@ public class HealthUi extends HBox implements ActionListener {
         restButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                Game.postAction(new RestAction());
+                Game.postAction(new Action(REST));
             }
             
         });
@@ -59,7 +57,7 @@ public class HealthUi extends HBox implements ActionListener {
                     recoveryTime = 4;
                 }
                 for (int i=0; i<recoveryTime; i++) {
-                    Game.postAction(new RestAction());
+                    Game.postAction(new Action(REST));
                 }
             }
             
@@ -99,13 +97,17 @@ public class HealthUi extends HBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof PlayerHealthChanged) {
-            update();
+        switch(a.getType()) {
+            case PLAYER_HEALTH_CHANGED:
+                update();
+                break;
+            case END_OF_WORLD:
+                restButton.setDisable(true);
+                recoverButton.setDisable(true);
+                break;
+
         }
-        if (a instanceof EndOfWorldAction) {
-            restButton.setDisable(true);
-            recoverButton.setDisable(true);
-        }
+
     }
 
     

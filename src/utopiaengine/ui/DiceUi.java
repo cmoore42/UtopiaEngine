@@ -12,8 +12,8 @@ import javafx.scene.layout.HBox;
 import utopiaengine.Dice;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.DICE_ROLLED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.DiceRolledAction;
 
 /**
  *
@@ -78,7 +78,7 @@ public class DiceUi extends HBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof DiceRolledAction) {
+        if (a.getType() == DICE_ROLLED) {
             update();
         }
         

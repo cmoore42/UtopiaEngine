@@ -147,15 +147,7 @@ public class TestDialog extends Dialog<Integer> implements ActionListener {
             }
             
         });
-        Button delPowerButton = new Button("Poser Down God's Hand");
-        delPowerButton.setOnAction(new EventHandler<ActionEvent>() {
 
-            @Override
-            public void handle(ActionEvent event) {
-
-            }
-            
-        });
         Button delayButton = new Button("Delay Doomsday");
         delayButton.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -165,7 +157,7 @@ public class TestDialog extends Dialog<Integer> implements ActionListener {
             }
             
         });
-        otherBox.getChildren().addAll(damageButton, healButton, timeButton, addPowerButton, delPowerButton, delayButton);
+        otherBox.getChildren().addAll(damageButton, healButton, timeButton, addPowerButton, delayButton);
         
         
         doneButton = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);

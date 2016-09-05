@@ -6,7 +6,8 @@
 package utopiaengine;
 
 import static utopiaengine.Location.WORKSHOP;
-import utopiaengine.actions.PlayerHealthChanged;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.PLAYER_HEALTH_CHANGED;
 
 /**
  *
@@ -41,13 +42,13 @@ public class Player {
     
     public void dealDamage() {
         ++damage;
-        Game.postAction(new PlayerHealthChanged());
+        Game.postAction(new Action(PLAYER_HEALTH_CHANGED));
     }
     
     public void heal() {
         if (damage > 0) {
             --damage;
-            Game.postAction(new PlayerHealthChanged());
+            Game.postAction(new Action(PLAYER_HEALTH_CHANGED));
         }
     }
 

@@ -11,8 +11,8 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.WASTE_BASKET_CHANGED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.WasteBasketChangedAction;
 
 /**
  *
@@ -48,7 +48,7 @@ public class WasteBasketUi extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof WasteBasketChangedAction) {
+        if (a.getType() == WASTE_BASKET_CHANGED) {
             update();
         }
     }

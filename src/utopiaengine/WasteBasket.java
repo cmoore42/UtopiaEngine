@@ -7,7 +7,8 @@ package utopiaengine;
 
 import java.util.ArrayList;
 import java.util.List;
-import utopiaengine.actions.WasteBasketChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.WASTE_BASKET_CHANGED;
 
 /**
  *
@@ -25,7 +26,7 @@ public class WasteBasket {
             return;
         }
         contents.add(number);
-        Game.postAction(new WasteBasketChangedAction());
+        Game.postAction(new Action(WASTE_BASKET_CHANGED));
     }
     
     public List<Integer> getContents() {

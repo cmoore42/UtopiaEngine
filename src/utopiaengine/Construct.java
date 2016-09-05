@@ -10,7 +10,8 @@ import static utopiaengine.Construct.State.ACTIVATED;
 import static utopiaengine.Construct.State.CONNECTED;
 import static utopiaengine.Construct.State.FOUND;
 import static utopiaengine.Construct.State.MISSING;
-import utopiaengine.actions.ConstructChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.CONSTRUCT_CHANGED;
 
 /**
  *
@@ -69,7 +70,7 @@ public enum Construct {
 
     public void activate() {
         state = ACTIVATED;
-        Game.postAction(new ConstructChangedAction(this));
+        Game.postAction(new Action(CONSTRUCT_CHANGED, this));
     }
 
     public boolean isFound() {
@@ -78,12 +79,12 @@ public enum Construct {
 
     public void setFound() {
         state = FOUND;
-        Game.postAction(new ConstructChangedAction(this));
+        Game.postAction(new Action(CONSTRUCT_CHANGED, this));
     }
     
     public void setUsed(boolean used) {
         this.used = used;
-        Game.postAction(new ConstructChangedAction(this));
+        Game.postAction(new Action(CONSTRUCT_CHANGED, this));
     }
     
     public boolean isUsed() {

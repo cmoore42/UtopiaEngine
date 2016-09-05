@@ -6,7 +6,8 @@
 package utopiaengine;
 
 import javafx.scene.control.Tooltip;
-import utopiaengine.actions.ToolChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.TOOL_CHANGED;
 
 /**
  *
@@ -41,7 +42,7 @@ public enum Tool {
 
     public void setCharged(boolean charged) {
         this.charged = charged;
-        Game.postAction(new ToolChangedAction());
+        Game.postAction(new Action(TOOL_CHANGED));
         
     }
     

@@ -13,10 +13,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.DELAY_DOOMSDAY;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.DelayDoomsdayAction;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.TimeTrackerChangedAction;
 
 /**
  *
@@ -80,7 +78,7 @@ public class TimeTrackUi extends GridPane implements ActionListener {
 
             @Override
             public void handle(ActionEvent event) {
-                Game.postAction(new DelayDoomsdayAction());
+                Game.postAction(new Action(DELAY_DOOMSDAY));
             }
             
         });
@@ -119,11 +117,13 @@ public class TimeTrackUi extends GridPane implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof TimeTrackerChangedAction) {
-            update();
-            
-        } else if (a instanceof EndOfWorldAction) {
-            extendButton.setDisable(true);
+        switch(a.getType()) {
+            case TIME_TRACKER_CHANGED:
+                update();
+                break;
+            case END_OF_WORLD:
+                extendButton.setDisable(true);
+                break;
         }
     }
     

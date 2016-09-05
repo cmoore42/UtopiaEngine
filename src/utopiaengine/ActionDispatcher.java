@@ -10,9 +10,8 @@ import java.util.LinkedList;
 import java.util.Queue;
 import javafx.application.Platform;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.SHUTDOWN;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.ShutdownAction;
 
 /**
  *
@@ -46,11 +45,7 @@ public class ActionDispatcher extends Thread {
                     }
                     Action a = actionQueue.remove();
                     
-                    if (a instanceof EndOfWorldAction) {
-                        System.out.println("Received action " + a.getClass().getName());
-                    }
-                    
-                    if (a instanceof ShutdownAction) {
+                    if (a.getType() == SHUTDOWN) {
                         break;
                     }
 
@@ -59,9 +54,6 @@ public class ActionDispatcher extends Thread {
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (a instanceof EndOfWorldAction) {
-                                        System.out.println("Sending action " + a.getClass().getName() + " to " + l.getClass().getName());
-                                    }
                                     l.handleAction(a);
                                 }
                             });

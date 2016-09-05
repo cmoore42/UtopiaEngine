@@ -6,7 +6,8 @@
 package utopiaengine;
 
 import javafx.scene.control.Tooltip;
-import utopiaengine.actions.TreasureFoundAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.TREASURE_FOUND;
 
 /**
  *
@@ -40,7 +41,7 @@ public enum Treasure {
     
     public void setFound() {
         this.found = true;
-        Game.postAction(new TreasureFoundAction());
+        Game.postAction(new Action(TREASURE_FOUND));
     }
     
     public boolean isFound() {

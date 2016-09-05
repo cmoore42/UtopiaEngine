@@ -7,8 +7,9 @@ package utopiaengine;
 
 import static utopiaengine.Treasure.BRACELET;
 import static utopiaengine.Treasure.SCALE;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.TimeTrackerChangedAction;
+import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.END_OF_WORLD;
+import static utopiaengine.actions.Action.EventType.TIME_TRACKER_CHANGED;
 
 /**
  *
@@ -36,7 +37,7 @@ public class TimeTrack {
         if (godsHand > 6) {
             godsHand = 6;
         }
-        Game.postAction(new TimeTrackerChangedAction());
+        Game.postAction(new Action(TIME_TRACKER_CHANGED));
     }
     
     public int getGodsHand() {
@@ -50,7 +51,7 @@ public class TimeTrack {
             
             Game.info("You put off doomsday for another day.");
             Game.info("Total extension is now " + daysExtended);
-            Game.postAction(new TimeTrackerChangedAction());
+            Game.postAction(new Action(TIME_TRACKER_CHANGED));
         }
     }
     
@@ -69,7 +70,7 @@ public class TimeTrack {
         
         /* Has the world ended? */
         if ((currentTime - daysExtended) >= 15) {
-            Game.postAction(new EndOfWorldAction());
+            Game.postAction(new Action(END_OF_WORLD));
             outOfTime = true;
         }
         
@@ -96,7 +97,7 @@ public class TimeTrack {
             Game.info("The Scale of the Infinity Wurm heals you.");
         }
         
-        Game.postAction(new TimeTrackerChangedAction());
+        Game.postAction(new Action(TIME_TRACKER_CHANGED));
     }
     
     private void fireEvent() {

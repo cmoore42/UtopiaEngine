@@ -13,8 +13,8 @@ import javafx.scene.layout.VBox;
 import utopiaengine.Component;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.STORES_CHANGED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.StoresChangedAction;
 
 /**
  *
@@ -78,7 +78,7 @@ public class StoresUi extends VBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof StoresChangedAction) {
+        if (a.getType() == STORES_CHANGED) {
             update();
             
         }

@@ -26,9 +26,9 @@ import static utopiaengine.Construct.MIRROR;
 import static utopiaengine.Construct.SEAL;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.CONNECTION_COMPLETE;
+import static utopiaengine.actions.Action.EventType.ENGINE_ACTIVATED;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.ConnectionCompleteAction;
-import utopiaengine.actions.EngineActivatedAction;
 
 /**
  *
@@ -111,7 +111,7 @@ public class AllConstructsUi extends GridPane implements ActionListener {
                 if (result.isPresent()) {
                     int i = result.get();
                     if (i != 0) {
-                        Game.postAction(new EngineActivatedAction());
+                        Game.postAction(new Action(ENGINE_ACTIVATED));
                     }
                 }
             }
@@ -127,7 +127,7 @@ public class AllConstructsUi extends GridPane implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof ConnectionCompleteAction) {
+        if (a.getType() == CONNECTION_COMPLETE) {
             boolean allConnected = true;
             
             for (Connection c : Connection.values()) {

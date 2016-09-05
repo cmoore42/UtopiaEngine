@@ -9,8 +9,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.INFO;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.InfoAction;
+
 
 /**
  *
@@ -39,9 +40,8 @@ public class InfoDisplay extends HBox implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof InfoAction) {
-            InfoAction i = (InfoAction) a;
-            write(i.getLine() + "\n");
+        if (a.getType() == INFO) {
+            write(a.getText() + "\n");
         }
     }
     

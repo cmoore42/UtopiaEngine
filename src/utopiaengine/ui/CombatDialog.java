@@ -23,9 +23,9 @@ import static utopiaengine.Tool.WAND;
 import static utopiaengine.Treasure.PLATE;
 import static utopiaengine.Treasure.SHARD;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.END_OF_WORLD;
+import static utopiaengine.actions.Action.EventType.TRAVEL;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
-import utopiaengine.actions.TravelAction;
 
 /**
  *
@@ -154,7 +154,7 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
                 
                 if (Game.getPlayer().isUnconsious()) {
                     resultLabel.setText("You're unconscious.");
-                    Game.postAction(new TravelAction(WORKSHOP));
+                    Game.postAction(new Action(TRAVEL, WORKSHOP));
                     getDialogPane().lookupButton(doneButton).setDisable(false);
                     rollButton.setDisable(true);
                     Game.info("You're unconscious.");
@@ -221,7 +221,7 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof EndOfWorldAction) {
+        if (a.getType() == END_OF_WORLD) {
             getDialogPane().lookupButton(doneButton).setDisable(false);
             rollButton.setDisable(true);
             wandButton.setDisable(true);

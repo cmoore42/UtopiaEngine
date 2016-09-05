@@ -18,8 +18,8 @@ import javafx.util.Callback;
 import utopiaengine.Connection;
 import utopiaengine.Game;
 import utopiaengine.actions.Action;
+import static utopiaengine.actions.Action.EventType.END_OF_WORLD;
 import utopiaengine.actions.ActionListener;
-import utopiaengine.actions.EndOfWorldAction;
 
 /**
  *
@@ -185,7 +185,7 @@ public class ConnectionDialog extends Dialog<Integer> implements ActionListener 
 
     @Override
     public void handleAction(Action a) {
-        if (a instanceof EndOfWorldAction) {
+        if (a.getType() == END_OF_WORLD) {
             for (int i=0; i<6; i++) {
                 rollButtons[i].setDisable(true);
             }
