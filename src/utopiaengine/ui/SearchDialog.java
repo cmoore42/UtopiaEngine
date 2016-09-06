@@ -169,42 +169,62 @@ public class SearchDialog extends Dialog<Integer> implements ActionListener {
         int first;
         int second;
 
-        first = Integer.parseInt(gridSquares[0].getText()) * 100;
-        first += Integer.parseInt(gridSquares[1].getText()) * 10;
-        first += Integer.parseInt(gridSquares[2].getText());
+        try {
+            first = Integer.parseInt(gridSquares[0].getText()) * 100;
+            first += Integer.parseInt(gridSquares[1].getText()) * 10;
+            first += Integer.parseInt(gridSquares[2].getText());
 
-        second = Integer.parseInt(gridSquares[3].getText()) * 100;
-        second += Integer.parseInt(gridSquares[4].getText()) * 10;
-        second += Integer.parseInt(gridSquares[5].getText());
+            second = Integer.parseInt(gridSquares[3].getText()) * 100;
+            second += Integer.parseInt(gridSquares[4].getText()) * 10;
+            second += Integer.parseInt(gridSquares[5].getText());
 
-        result = first - second;
-        
-        /* If the result is negative there's no point in applying effects
-         * to make it more negative.
-         */
-        if (result >= 0) {
-            if (rodUsed) {
-                result -= 100;
-                if (result < 1) {
-                    result = 1;
+            result = first - second;
+
+            /* If the result is negative there's no point in applying effects
+             * to make it more negative.
+             */
+            if (result >= 0) {
+                if (rodUsed) {
+                    result -= 100;
+                    if (result < 1) {
+                        result = 1;
+                    }
+                }
+
+                if (where.hasEvent(FORTUNE)) {
+                    result -= 10;
+                    if (result < 0) {
+                        result = 0;
+                    }
+                }
+
+                if (constructHelps) {
+                    result -= 10;
+                    if (result < 0) {
+                        result = 0;
+                    }
                 }
             }
-
-            if (where.hasEvent(FORTUNE)) {
-                result -= 10;
-                if (result < 0) {
-                    result = 0;
-                }
-            }
-
-            if (constructHelps) {
-                result -= 10;
-                if (result < 0) {
-                    result = 0;
-                }
-            }
+        } catch (NumberFormatException e) {
+            /* 
+             * This is a tricky one.  calculateResult() should only be called
+             * after all three rolls are done, which means all the boxes are
+             * filled in.  But if the user closes the search box rather than
+             * going through the search then we can get here with blank boxes.
+             * 
+             * The game mechanics don't allow ending a search early, so one
+             * solution would be to prevent the closing of the dialog early - 
+             * but that seems like a poor interface design choice.  There 
+             * may be times the user just wants to shut down and quit.
+             *
+             * The solution here is that if the box is closed early, causing
+             * us to catch this exception, we'll just return a really big 
+             * number for the search value.  It's not ideal, but it's the best
+             * I have.
+             */
+            result = 999;
         }
-
+        
         return result;    
     }
     
@@ -213,6 +233,9 @@ public class SearchDialog extends Dialog<Integer> implements ActionListener {
         int first;
         int second;
 
+        /* We can't use calculateResult() here, because we want to know
+         * if it was a perfect zero without modifications.
+         */
         try {
             first = Integer.parseInt(gridSquares[0].getText()) * 100;
             first += Integer.parseInt(gridSquares[1].getText()) * 10;

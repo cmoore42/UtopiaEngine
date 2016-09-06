@@ -64,12 +64,12 @@ public class DiceUi extends HBox implements ActionListener {
     }
     
     public void highlight(int which) {
-        if (which == 1) {
+        if ((which & 1) != 0) {
             die1Pane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
         } else {
             die1Pane.setStyle("-fx-border-color: black");
         }
-        if (which == 2) {
+        if ((which & 2) != 0) {
             die2Pane.setStyle("-fx-border-color: red; -fx-border-width: 2;");
         } else {
             die2Pane.setStyle("-fx-border-color: black");

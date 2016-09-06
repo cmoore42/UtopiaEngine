@@ -12,6 +12,7 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
@@ -38,6 +39,11 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
     private boolean wandUsed = false;
     private Button rollButton;
     private Button wandButton;
+    private TextArea statusBox;
+    private DiceUi dice;
+    private boolean chassisEffect = false;
+    private int attack;
+    private int hit;
     
     public CombatDialog(int combatLevel) {
         setTitle("Combat");
@@ -46,9 +52,17 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
         opponent = Game.getPlayer().getLocation().getMonster(combatLevel);
         setHeaderText("Encounter with " + opponent.getName() + " (level " + combatLevel + ")");
         
-        VBox outer = new VBox();
+        HBox outer = new HBox();
         
-        HBox upper = new DiceUi();
+        VBox left = new VBox();
+        
+        statusBox = new TextArea();
+        statusBox.setWrapText(true);
+        statusBox.setEditable(false);
+        
+        postCombatInfo("Opponent: " + opponent.getName()+ "(Level " + combatLevel + ")");
+        
+        dice = new DiceUi();
         
         resultLabel = new Label();
         rollButton = new Button("Roll");
@@ -63,7 +77,7 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
 
             @Override
             public void handle(ActionEvent event) {
-                Game.info("You activate the Paralysis Wand.");
+                postCombatInfo("You activate the Paralysis Wand.");
                 wandUsed = true;
                 WAND.setCharged(false);
                 wandButton.setDisable(true);
@@ -71,16 +85,36 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
             
         });
         
-        if (PLATE.isFound() && (opponent.getAttack() > 1)) {
-            Game.info("The Ice Plate makes you harder to hit.");
+        attack = opponent.getAttack();
+        hit = opponent.getHit();
+        
+        boolean goalsChanged = false;
+        reportGoals(attack, hit);
+        
+        if (PLATE.isFound()) {
+            postCombatInfo("The Ice Plate makes you harder to hit.");
+            if (attack > 1) {
+                --attack;
+                goalsChanged = true;
+            } else {
+                postCombatInfo("But its attack was already 1.");
+            }
+            
         }
         
         if (SHARD.isFound()) {
-            Game.info("The Molten Shard makes the mosnter more vulnerable.");
+            postCombatInfo("The Molten Shard makes the monster more vulnerable.");
+            --hit;
+            goalsChanged = true;
         }
         
         if (CHASSIS.isActivated() && opponent.isSpirit()) {
-            Game.info("The Golden Chassis makes your attacks more effective.");
+            chassisEffect = true;
+            postCombatInfo("The Golden Chassis makes your attacks more effective.");
+        }
+        
+        if (goalsChanged) {
+            reportGoals(attack, hit);
         }
         
         rollButton.setOnAction(new EventHandler<ActionEvent>() {
@@ -94,22 +128,30 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
                 Game.getDice().roll();
                 int die1 = Game.getDice().getDie(1);
                 int die2 = Game.getDice().getDie(2);
-                int opponentAttack = opponent.getAttack();
-                int opponentHit = opponent.getHit();
-                
-                if (PLATE.isFound() && (opponentAttack > 1)) {
-                    --opponentAttack;  
-                }
-                
-                if (SHARD.isFound()) {
-                    --opponentHit;
-                }
+                int origDie1 = die1;
+                int origDie2 = die2;
                 
                 if (wandUsed) {
                     die1 += 2;
-                    
                     die2 += 2;
-                    
+                }
+                
+                if (die1 > 6) {
+                    die1 = 6;
+                }
+                
+                if (die2 > 6) {
+                    die2 = 6;
+                }
+                
+                if (die1 != origDie1) {
+                    postCombatInfo("The Paralysis Wand turns your " + origDie1 + " into " + die1);
+                    origDie1 = die1;
+                }
+                
+                if (die2 != origDie2) {
+                    postCombatInfo("The Paralysis Wand turns your " + origDie2 + " into " + die2);
+                    origDie2 = die2;
                 }
                 
                 if (CHASSIS.isActivated() && opponent.isSpirit()) {
@@ -125,30 +167,45 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
                     die2 = 6;
                 }
                 
-                if (die1 <= opponentAttack) {
+                if (die1 != origDie1) {
+                    postCombatInfo("The Golden Chassis turns your " + origDie1 + " into " + die1);
+                }
+                
+                if (die2 != origDie2) {
+                    postCombatInfo("The Golden Chassis turns your " + origDie2 + " into " + die2);
+                }
+                
+                int highlight = 0;
+                if (die1 <= attack) {
                     /* It hit us */
                     Game.getPlayer().dealDamage();
                     ++hitMe;
+                    highlight |= 1;
                 }
-                if (die2 <= opponentAttack) {
+                if (die2 <= attack) {
                     /* It hit us */
                     Game.getPlayer().dealDamage();
                     ++hitMe;
+                    highlight |= 2;
                 }
-                if (die1 >= opponentHit) {
+                if (die1 >= hit) {
                     /* We killed it */
                     killedIt = true;
+                    highlight |=1 ;
                 }
-                if (die2 >= opponentHit) {
+                if (die2 >= hit) {
                     /* We killed it */
                     killedIt = true;
+                    highlight |= 2;
                 }
+                
+                dice.highlight(highlight);
                 
                 if (Game.getPlayer().isDead()) {
                     resultLabel.setText("You've died!");
                     getDialogPane().lookupButton(doneButton).setDisable(false);
                     rollButton.setDisable(true);
-                    Game.info("You're dead!");
+                    postCombatInfo("You're dead!");
                     return;
                 }
                 
@@ -157,7 +214,7 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
                     Game.postAction(new Action(TRAVEL, WORKSHOP));
                     getDialogPane().lookupButton(doneButton).setDisable(false);
                     rollButton.setDisable(true);
-                    Game.info("You're unconscious.");
+                    postCombatInfo("You're unconscious.");
                     return;
                 }
                 
@@ -167,20 +224,21 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
                     switch(hitMe) {
                         case 0:
                             resultString.append("Killed it.");
-                            Game.info("You killed it.");
+                            postCombatInfo("You killed it.");
                             break;
                         case 1:
                             resultString.append("Hit me once");
-                            Game.info("The monster hit you.");
+                            postCombatInfo("The monster hit you.");
                             break;
                         case 2:
                             resultString.append("Hit me twice");
-                            Game.info("The monster hit you twice!");
+                            postCombatInfo("The monster hit you twice!");
                             break;
                     }
                     
                     if (killedIt && (hitMe > 0)) {
                         resultString.append(", killed it.");
+                        postCombatInfo("You killed it");
                     } else {
                         resultString.append(".");
                     }
@@ -198,7 +256,9 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
             
         });
         
-        outer.getChildren().addAll(upper, resultLabel, rollButton, wandButton);
+        left.getChildren().addAll(dice, resultLabel, rollButton, wandButton);
+        
+        outer.getChildren().addAll(left, statusBox);
         
         doneButton = new ButtonType("Done", ButtonBar.ButtonData.OK_DONE);
         
@@ -225,6 +285,24 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
             getDialogPane().lookupButton(doneButton).setDisable(false);
             rollButton.setDisable(true);
             wandButton.setDisable(true);
+        }
+    }
+    
+    private void postCombatInfo(String text) {
+        statusBox.appendText(text + "\n");
+    }
+    
+    private void reportGoals(int attack, int hit) {
+        if (attack < 2) {
+            postCombatInfo("It hits you on a roll of 1.");
+        } else {
+            postCombatInfo("It hits you on a roll of 1 to " + attack + ".");
+        }
+        
+        if (hit > 5) {
+            postCombatInfo("You kill it on a roll of 6.");
+        } else {
+            postCombatInfo("You kill it on a roll of " + hit + " to 6.");
         }
     }
     
