@@ -76,7 +76,7 @@ public class HealthUi extends HBox implements ActionListener {
         progressBar.setProgress(damagePercent);
         label.setText("Damage " + Game.getPlayer().getDamage() + "/6");
         
-        if (GATE.isFound()) {
+        if (GATE.isActivated()) {
             recoverButton.setText("Recover (Rest 4)");
         } else {
             recoverButton.setText("Recover (Rest 6)");

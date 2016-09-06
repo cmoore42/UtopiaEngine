@@ -80,7 +80,7 @@ public enum Connection implements ActionListener {
                 (!connected)) {
                 Game.postAction(new Action(CAN_CONNECT, this, true));
             } else {
-                Game.postAction(new Action(CAN_CONNECT, this, true));
+                Game.postAction(new Action(CAN_CONNECT, this, false));
             }
         }
 
