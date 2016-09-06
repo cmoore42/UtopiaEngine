@@ -185,11 +185,15 @@ public class ConnectionDialog extends Dialog<Integer> implements ActionListener 
 
     @Override
     public void handleAction(Action a) {
-        if (a.getType() == END_OF_WORLD) {
-            for (int i=0; i<6; i++) {
-                rollButtons[i].setDisable(true);
-            }
-            wasteButton.setDisable(true);
+        switch (a.getType()) {
+            case END_OF_WORLD:
+                close();
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (Game.getPlayer().isDead()) {
+                    close();
+                }
+                break;
         }
     }
     

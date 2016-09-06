@@ -127,10 +127,12 @@ public class Game implements ActionListener {
                 ++perfectSearches;
                 break;
             case PLAYER_HEALTH_CHANGED:
-                if (player.isDead()) {
-                    info("You've died.");
-                    gameOver = true;
-                    reportFinalScore();
+                if (!gameOver) {
+                    if (player.isDead()) {
+                        info("You've died.");
+                        gameOver = true;
+                        reportFinalScore();
+                    }
                 }
                 break;               
         }

@@ -133,6 +133,16 @@ public class FinalActivationDialog extends Dialog<Integer> implements ActionList
 
     @Override
     public void handleAction(Action a) {
+        switch(a.getType()) {
+            case END_OF_WORLD:
+                close();
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (Game.getPlayer().isDead()) {
+                    close();
+                }
+                break;              
+        }
     }
     
     private void update() {

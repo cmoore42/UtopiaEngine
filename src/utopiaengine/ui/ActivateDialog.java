@@ -51,10 +51,15 @@ public class ActivateDialog extends Dialog<Integer> implements ActionListener {
 
     @Override
     public void handleAction(Action a) {
-        if (a.getType() == END_OF_WORLD) {
-            firstAttempt.disable();
-            secondAttempt.disable();
-            charmButton.setDisable(true);
+        switch(a.getType()) {
+            case END_OF_WORLD:
+                close();
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (Game.getPlayer().isDead()) {
+                    close();
+                }
+                break;              
         }
     }
     
@@ -357,6 +362,8 @@ public class ActivateDialog extends Dialog<Integer> implements ActionListener {
         dieNumber = 1;
         Game.getDice().roll();
         dice.highlight(dieNumber);
+        
+        Game.getInstance().addListener(this);
         
     }
     

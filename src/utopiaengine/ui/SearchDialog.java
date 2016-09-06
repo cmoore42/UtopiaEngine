@@ -259,15 +259,14 @@ public class SearchDialog extends Dialog<Integer> implements ActionListener {
     public void handleAction(Action a) {
         switch(a.getType()) {
             case END_OF_WORLD:
-                getDialogPane().lookupButton(doneButton).setDisable(false);
-                for (int i=0; i<6; i++ ){
-                    gridSquares[i].setDisable(true);
-                }
-                dowsingRodButton.setDisable(true);
+                close();
                 break;
             case PLAYER_HEALTH_CHANGED:
                 if (Game.getPlayer().isDead() || Game.getPlayer().isUnconsious()) {
+                    /*
                     dowsingRodButton.setDisable(true);
+                            */
+                    close();
                 }
                 break;
         }

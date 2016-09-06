@@ -277,15 +277,23 @@ public class CombatDialog extends Dialog<Integer> implements ActionListener {
             }
             
         });
+        
+        Game.getInstance().addListener(this);
     }
 
     @Override
     public void handleAction(Action a) {
-        if (a.getType() == END_OF_WORLD) {
-            getDialogPane().lookupButton(doneButton).setDisable(false);
-            rollButton.setDisable(true);
-            wandButton.setDisable(true);
+        switch (a.getType()) {
+            case END_OF_WORLD:
+                close();
+                break;
+            case PLAYER_HEALTH_CHANGED:
+                if (Game.getPlayer().isDead()) {
+                    close();
+                }
+            break;
         }
+
     }
     
     private void postCombatInfo(String text) {
