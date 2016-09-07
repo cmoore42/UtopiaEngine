@@ -64,9 +64,10 @@ public class TimeTrack {
     }
     
     public void tick() {
-        if (currentTime < 22) {
-            ++currentTime;
+        if (outOfTime) {
+            return;
         }
+        ++currentTime;
         
         /* Has the world ended? */
         if ((currentTime - daysExtended) >= 15) {
