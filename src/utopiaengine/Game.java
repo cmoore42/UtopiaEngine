@@ -141,10 +141,10 @@ public class Game implements ActionListener {
     private static void doSearch() {
         player.getLocation().incrementSearchCounter();
         
-        if (gameOver) {
+        if (timeTrack.outOfTime()) {
             return;
         }
-        
+                
         SearchDialog d = new SearchDialog(player.getLocation());
         Optional<Integer> result = d.showAndWait();
 
